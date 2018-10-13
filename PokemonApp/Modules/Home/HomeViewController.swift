@@ -19,25 +19,31 @@ class HomeViewController: BaseViewController {
         return imageView
     }()
     
-    private let buttonsStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .vertical
-        stackView.spacing = 30
-        
+    private let pokedexButton: UIButton = {
         let pokedexButton = UIButton()
         pokedexButton.translatesAutoresizingMaskIntoConstraints = false
         pokedexButton.setTitle("Pokedex", for: .normal)
         pokedexButton.setTitleColor(.black, for: .normal)
         pokedexButton.backgroundColor = .orange
         pokedexButton.layer.cornerRadius = 20
-        
+        return pokedexButton
+    }()
+    
+    private let playButton: UIButton = {
         let playButton = UIButton()
         playButton.translatesAutoresizingMaskIntoConstraints = false
         playButton.setTitle("Play!", for: .normal)
         playButton.setTitleColor(.black, for: .normal)
         playButton.backgroundColor = .orange
         playButton.layer.cornerRadius = 20
+        return playButton
+    }()
+    
+    private lazy var buttonsStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 30
 
         stackView.addArrangedSubview(pokedexButton)
         stackView.addArrangedSubview(playButton)
@@ -52,10 +58,24 @@ class HomeViewController: BaseViewController {
         super.viewDidLoad()
 
         setupUILayout()
+        setupButtonsActions()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
-
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
     private func setupUILayout() {
+        view.backgroundColor = .white
+        
         view.addSubview(logoImageView)
         
         logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50).isActive = true
@@ -69,5 +89,17 @@ class HomeViewController: BaseViewController {
         buttonsStackView.widthAnchor.constraint(equalToConstant: 250).isActive = true
     }
     
-
+    private func setupButtonsActions() {
+        playButton.addTarget(self, action: #selector(playButtonDidTouchUpInside), for: .touchUpInside)
+        pokedexButton.addTarget(self, action: #selector(pokedexButtonDidTouchUpInside), for: .touchUpInside)
+    }
+    
+    @objc private func playButtonDidTouchUpInside() {
+    }
+    
+    @objc private func pokedexButtonDidTouchUpInside() {
+        let pokedexViewController = PokedexTableViewController()
+        navigationController?.pushViewController(pokedexViewController, animated: true)
+    }
+    
 }
