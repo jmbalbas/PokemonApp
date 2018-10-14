@@ -8,65 +8,11 @@
 
 import UIKit
 
-class PokemonDetailSpritesTableViewCell: UITableViewCell {
-    static let reuseIdentifier = "PokemonDetailSpritesTableViewCellId"
-    
-    private let stackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-    
-    let frontDefaultImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
-    private let backDefaultImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
-    private var sprite: Sprite?
-    
-    func setup(sprite: Sprite?) {
-        self.sprite = sprite
-        setupUILayout()
-    }
-    
-    private func setupUILayout() {
-        addSubview(stackView)
-        
-        stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-
-        stackView.addArrangedSubview(frontDefaultImageView)
-        
-        frontDefaultImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
-        frontDefaultImageView.topAnchor.constraint(equalTo: stackView.topAnchor).isActive = true
-        frontDefaultImageView.centerYAnchor.constraint(equalTo: stackView.centerYAnchor).isActive = true
-        
-        frontDefaultImageView.loadImageUrl(sprite?.frontDefault, placeholder: UIImage())
-        
-        stackView.addArrangedSubview(backDefaultImageView)
-        backDefaultImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
-        backDefaultImageView.topAnchor.constraint(equalTo: frontDefaultImageView.topAnchor).isActive = true
-        backDefaultImageView.centerYAnchor.constraint(equalTo: frontDefaultImageView.centerYAnchor).isActive = true
-        
-        backDefaultImageView.loadImageUrl(sprite?.backDefault, placeholder: UIImage())
-    }
-}
-
 class PokemonDetailViewController: BaseViewController {
     private var pokemonName: String
+    private var pokemonId: String?
+    private var pokemonResponseModel: PokemonResponseModel?
+    private var pokemonSpecieResponseModel: PokemonSpecieResponseModel?
     private var pokemon: Pokemon? {
         didSet {
             setupTableViewSections()
@@ -75,7 +21,7 @@ class PokemonDetailViewController: BaseViewController {
     }
     
     enum Section {
-        case sprites, type, technicalData
+        case description, sprites, type, technicalData
     }
     
     private var sections: [Section] = []
@@ -92,8 +38,9 @@ class PokemonDetailViewController: BaseViewController {
         return tableView
     }()
     
-    init(pokemonName: String) {
+    init(pokemonName: String, pokemonId: String?) {
         self.pokemonName = pokemonName
+        self.pokemonId = pokemonId
         super.init(nibName: nil, bundle:  nil)
     }
     
@@ -112,27 +59,51 @@ class PokemonDetailViewController: BaseViewController {
     }
     
     private func registerCells() {
+        tableView.register(PokemonDetailDescriptionTableViewCell.self, forCellReuseIdentifier: PokemonDetailDescriptionTableViewCell.reuseIdentifier)
         tableView.register(PokemonDetailSpritesTableViewCell.self, forCellReuseIdentifier: PokemonDetailSpritesTableViewCell.reuseIdentifier)
+        tableView.register(PokemonDetailTypesTableViewCell.self, forCellReuseIdentifier: PokemonDetailTypesTableViewCell.reuseIdentifier)
+    }
+    
+    private func handleError() {
+        let alertController = UIAlertController(title: "Ops!", message: "Se ha producido un error cargando el pokemon", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "ok", style: .default) { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        }
+        alertController.addAction(okAction)
+        present(alertController, animated: true, completion: nil)
     }
     
     private func loadPokemonData() {
-        // TODO: Start loading
-        NetworkService.getPokemon(withName: pokemonName) { [weak self] (result, error) in
-            guard let strongSelf = self else { return }
-            
-            // TODO: Stop loading
-            if let error = error {
-                //TODO: Handle error
-                
+        startLoading()
+
+        NetworkService.getPokemon(withName: pokemonName) { [weak self] (pokemonResponseModel, error) in
+            if let _ = error {
+                self?.handleError()
                 return
             }
-            
-            if let result = result, let pokemon = Pokemon.model(fromResponseModel: result) {
-                self?.pokemon = pokemon
-            } else {
-                // There was a problem when parsing the data. Show alert and dismiss view controller.
-            }
 
+            if let pokemonResponseModel = pokemonResponseModel {
+                self?.pokemonResponseModel = pokemonResponseModel
+
+                guard let speciesURL = pokemonResponseModel.species?.url else {
+                    self?.pokemon = Pokemon.model(fromPokemonResponseModel: pokemonResponseModel, andPokemoSpecieResponseModel: nil)
+                    self?.stopLoading()
+                    return
+                }
+
+                NetworkService.getSpecie(fromURL: speciesURL) { (pokemonSpeciesResponseModel, error) in
+                    self?.stopLoading()
+                    if let _ = error {
+                        self?.handleError()
+                        return
+                    }
+
+                    if let pokemonSpeciesResponseModel = pokemonSpeciesResponseModel {
+                        self?.pokemonSpecieResponseModel = pokemonSpeciesResponseModel
+                        self?.pokemon = Pokemon.model(fromPokemonResponseModel: pokemonResponseModel, andPokemoSpecieResponseModel: pokemonSpeciesResponseModel)
+                    }
+                }
+            }
         }
     }
 
@@ -149,12 +120,14 @@ class PokemonDetailViewController: BaseViewController {
     
     private func setupTableViewSections() {
         guard let pokemon = pokemon else { return }
+    
+        sections.append(.sprites)
         
-        if pokemon.hasSprites() {
-            sections.append(.sprites)
+        if pokemon.hasDescription() {
+            sections.append(.description)
         }
         
-//        sections.append(.type)
+        sections.append(.type)
 //        sections.append(.technicalData)
     }
 }
@@ -169,6 +142,8 @@ extension PokemonDetailViewController: UITableViewDataSource {
         switch sections[section] {
         case .sprites:
             return "Sprites"
+        case .type:
+            return "Type"
         default:
             break
         }
@@ -182,10 +157,21 @@ extension PokemonDetailViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch sections[indexPath.section] {
+        case .description:
+            let cell = tableView.dequeueReusableCell(withIdentifier: PokemonDetailDescriptionTableViewCell.reuseIdentifier, for: indexPath) as! PokemonDetailDescriptionTableViewCell
+            if let localizedDescription = pokemon?.getLocalizedDescription() {
+                cell.setup(with: localizedDescription)
+            }
+            return cell
         case .sprites:
             let cell = tableView.dequeueReusableCell(withIdentifier: PokemonDetailSpritesTableViewCell.reuseIdentifier, for: indexPath) as! PokemonDetailSpritesTableViewCell
-            cell.setup(sprite: pokemon?.sprites)
+            cell.setup(with: pokemon?.sprites)
             return cell
+        case .type:
+            let cell = tableView.dequeueReusableCell(withIdentifier: PokemonDetailTypesTableViewCell.reuseIdentifier, for: indexPath) as! PokemonDetailTypesTableViewCell
+            cell.setup(with: pokemon?.types)
+            return cell
+            
         default:
             break
         }
@@ -203,12 +189,13 @@ extension PokemonDetailViewController: UITableViewDelegate {
         return UITableView.automaticDimension
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return nil
-    }
-    
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
+        switch sections[section] {
+        case .type:
+            return UITableView.automaticDimension
+        default:
+            return 0
+        }
     }
  
 }

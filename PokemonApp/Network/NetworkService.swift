@@ -13,12 +13,14 @@ final class NetworkService {
     static var baseUrl = "https://pokeapi.co/api/v2"
     
     enum EndPoint {
-        case getPokemon
+        case getPokemon//, getSpecie
         
         var description: String {
             switch self {
             case .getPokemon:
                 return "/pokemon/"
+//            case .getSpecie:
+//                return "/pokemon-species/"
             }
         }
     }
@@ -53,5 +55,20 @@ final class NetworkService {
             }
         }
     }
-
+        
+    static func getSpecie(fromURL url: URL, completionHandler: @escaping (PokemonSpecieResponseModel?, Error?) -> ()) {
+        Alamofire.request(url, method: .get, parameters: nil).validate().responseJSON { (response) in
+            var result: PokemonSpecieResponseModel?
+            let error = response.error
+            
+            defer { completionHandler(result, error) }
+            
+            guard response.result.isSuccess else { return }
+            
+            if let data = response.data, let pokemonListResponseModel = try? JSONDecoder().decode(PokemonSpecieResponseModel.self, from: data) {
+                result = pokemonListResponseModel
+            }
+        }
+    }
+    
 }

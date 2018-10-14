@@ -8,37 +8,21 @@
 
 import UIKit
 
-class PokedexTableViewCell: UITableViewCell {
-    static let reuseIdentifier = "PokedexTableViewCellId"
-    
-    private let nameLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    func setup(position: Int, name: String) {
-        setupUILayout()
-        nameLabel.text = String(describing: position) + ". " + name
-    }
-    
-    private func setupUILayout() {
-        addSubview(nameLabel)
-        
-        nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
-        nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20).isActive = true
-        nameLabel.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20).isActive = true
-    }
-}
-
-class PokedexTableViewController: UITableViewController {
+class PokedexTableViewController: BaseViewController {
 
     private var pokemonList: PokemonList? {
         didSet {
             tableView.reloadData()
         }
     }
+    
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.dataSource = self
+        tableView.delegate = self
+        return tableView
+    }()
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -50,53 +34,40 @@ class PokedexTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        title = "Pokedex"
-        navigationController?.navigationBar.prefersLargeTitles = true
+
+        setupUILayout()
         registerCells()
         loadPokemonsIfNeeded()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let index = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: index, animated: true)
+        }
+    }
+    
     private func registerCells() {
         tableView.register(PokedexTableViewCell.self, forCellReuseIdentifier: PokedexTableViewCell.reuseIdentifier)
     }
     
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return pokemonList?.pokemonNames.count ?? 0
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: PokedexTableViewCell.reuseIdentifier, for: indexPath) as! PokedexTableViewCell
+    private func setupUILayout() {
+        title = "Pokedex"
+        navigationController?.navigationBar.prefersLargeTitles = true
         
-        if let pokemonNames = pokemonList?.pokemonNames {
-            let row = indexPath.row
-            cell.setup(position: row + 1, name: pokemonNames[row])
-        }
-        
-        return cell
-    }
-
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 40
-    }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let selectedPokemonName = pokemonList?.pokemonNames[indexPath.row] {
-            let pokemonDetailViewController = PokemonDetailViewController(pokemonName: selectedPokemonName)
-            navigationController?.pushViewController(pokemonDetailViewController, animated: true)
-        }
+        view.addSubview(tableView)
+        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
 
     private func loadPokemonsIfNeeded() {
-        // Start Loading
+        startLoading()
         NetworkService.getPokemons { [weak self] (result, error) in
-            // Stop loading
+            self?.stopLoading()
+            
             if let _ = error {
                 
                 return
@@ -106,4 +77,45 @@ class PokedexTableViewController: UITableViewController {
             }
         }
     }
+}
+
+extension PokedexTableViewController: UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return pokemonList?.list.count ?? 0
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: PokedexTableViewCell.reuseIdentifier, for: indexPath) as! PokedexTableViewCell
+        if let pokemonNames = pokemonList?.list.map({ $0.pokemonName }) {
+            let row = indexPath.row
+            cell.setup(position: row + 1, name: pokemonNames[row])
+        }
+        
+        return cell
+    }
+
+}
+
+extension PokedexTableViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.backgroundColor = .clear
+    }
+    
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 40
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let selectedPokemon = pokemonList?.list[indexPath.row] {
+            let pokemonDetailViewController = PokemonDetailViewController(pokemonName: selectedPokemon.pokemonName, pokemonId: selectedPokemon.pokemonId)
+            navigationController?.pushViewController(pokemonDetailViewController, animated: true)
+        }
+    }
+    
 }

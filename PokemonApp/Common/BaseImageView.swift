@@ -1,8 +1,8 @@
 //
-//  UIImageView+Extension.swift
+//  BaseImageView.swift
 //  PokemonApp
 //
-//  Created by Juan Santiago Martín Balbás on 13/10/2018.
+//  Created by Juan Santiago Martín Balbás on 14/10/2018.
 //  Copyright © 2018 Juan Santiago Martín Balbás. All rights reserved.
 //
 
@@ -11,7 +11,27 @@ import Alamofire
 
 let imageCache = NSCache<AnyObject, AnyObject>()
 
-extension UIImageView {
+class BaseImageView: UIImageView {
+    
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .gray)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(activityIndicator)
+        
+        activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        
+        return activityIndicator
+    }()
+    
+    func startLoading() {
+        activityIndicator.startAnimating()
+    }
+    
+    func stopLoading() {
+        activityIndicator.stopAnimating()
+    }
     
     /// Assigns the placeholder image to the image view and starts the download of the image in asynchronous. If the image is correctly downloaded, then replaces the placeholder.
     /// - Parameters:
@@ -20,6 +40,8 @@ extension UIImageView {
     func loadImageUrl(_ url: URL?, placeholder: UIImage?) {
         if let placeholder = placeholder {
             image = placeholder
+        } else {
+            startLoading()
         }
         
         guard let url = url else { return }
@@ -31,6 +53,7 @@ extension UIImageView {
         }
         
         Alamofire.request(url).validate().responseData { [weak self] (response) in
+            self?.stopLoading()
             if !response.result.isSuccess {
                 // TODO: Handle error
                 return

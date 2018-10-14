@@ -74,7 +74,16 @@ class HomeViewController: BaseViewController {
     }
     
     private func setupUILayout() {
-        view.backgroundColor = .white
+        let imageView = UIImageView(image: UIImage(named: "Pikachu"))
+        imageView.contentMode = .scaleAspectFill
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.insertSubview(imageView, at: 0)
+        
+        imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        imageView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
         view.addSubview(logoImageView)
         

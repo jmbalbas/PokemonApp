@@ -17,12 +17,13 @@ struct PokemonResponseModel {
     private(set) var baseExperience: Int?
     private(set) var types: [TypesResponseModel]?
     private(set) var sprites: Sprite?
+    private(set) var species: SpeciesResponseModel?
 }
 
 extension PokemonResponseModel: Decodable {
     
     private enum Keys: String, CodingKey {
-        case name, id, order, height, weight, types, sprites
+        case name, id, order, height, weight, types, sprites, species
         case baseExperience = "base_experience"
     }
     
@@ -36,8 +37,9 @@ extension PokemonResponseModel: Decodable {
         let baseExperience = try? container.decode(Int.self, forKey: Keys.baseExperience)
         let types = try? container.decode([TypesResponseModel].self, forKey: Keys.types)
         let sprites = try? container.decode(Sprite.self, forKey: Keys.sprites)
-        
-        self.init(name: name, id: id, order: order, height: height, weight: weight, baseExperience: baseExperience, types: types, sprites: sprites)
+        let species = try? container.decode(SpeciesResponseModel.self, forKey: Keys.species)
+
+        self.init(name: name, id: id, order: order, height: height, weight: weight, baseExperience: baseExperience, types: types, sprites: sprites, species: species)
     }
 }
 
@@ -123,5 +125,29 @@ extension Sprite: Decodable {
                   backShiny: URL(string: backShiny ?? ""),
                   frontShinyFemale: URL(string: frontShinyFemale ?? ""),
                   backShinyFemale: URL(string: backShinyFemale ?? ""))
+    }
+}
+
+struct SpeciesResponseModel {
+    private(set) var name: String?
+    private(set) var url: URL?
+}
+
+extension SpeciesResponseModel: Decodable {
+    private enum Keys: String, CodingKey {
+        case name, url
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: Keys.self)
+        let name = try? container.decode(String.self, forKey: Keys.name)
+        let urlString = try? container.decode(String.self, forKey: Keys.url)
+        
+        var url: URL?
+        if let urlString = urlString {
+            url = URL(string: urlString)
+        }
+        
+        self.init(name: name, url: url)
     }
 }
