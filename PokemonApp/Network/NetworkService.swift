@@ -25,6 +25,9 @@ final class NetworkService {
         }
     }
     
+    /// Obtains a pokemon list.
+    /// - Parameters:
+    ///   - completionHandler: This contains the responsemodel and the error, if any.
     static func getPokemons(completionHandler: @escaping (PokemonListResponseModel?, Error?) -> ()) {
         let url = baseUrl + EndPoint.getPokemon.description
         
@@ -49,6 +52,10 @@ final class NetworkService {
         }
     }
     
+    /// Obtains the info of a pokemon.
+    /// - Parameters:
+    ///   - name: The name of the pokemon.
+    ///   - completionHandler: This contains the responsemodel and the error, if any.
     static func getPokemon(withName name: String, completionHandler: @escaping (PokemonResponseModel?, Error?) -> ()) {
         let url = baseUrl + EndPoint.getPokemon.description + name
         
@@ -71,7 +78,11 @@ final class NetworkService {
             }
         }
     }
-        
+    
+    /// Obtains the info of a pokemon specie.
+    /// - Parameters:
+    ///   - url: The url to obtain the data from.
+    ///   - completionHandler: This contains the responsemodel and the error, if any.
     static func getSpecie(fromURL url: URL, completionHandler: @escaping (PokemonSpecieResponseModel?, Error?) -> ()) {
         if let cachedResponseModel = getCachedRequest(urlString: url.absoluteString, responseModelType: PokemonSpecieResponseModel.self) {
             completionHandler(cachedResponseModel, nil)

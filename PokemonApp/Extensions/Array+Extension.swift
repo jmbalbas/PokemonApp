@@ -9,6 +9,9 @@
 import Foundation
 
 extension Array {
+    /// Obtain random different elements from the array
+    /// - Parameters:
+    ///   - number: The number of elements to obtain
     func randomElements(number: Int) -> [Element] {
         guard number > 0 else { return [Element]() }
         var remaining = self

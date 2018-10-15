@@ -54,7 +54,7 @@ class PokedexViewController: BaseViewController {
     }
     
     private func setupUILayout() {
-        title = "Pokedex"
+        title = "Pokedex".localized
         navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = .clear
 
@@ -71,9 +71,10 @@ class PokedexViewController: BaseViewController {
             self?.stopLoading()
             
             if let _ = error {
-                
+                self?.handleError()
                 return
             }
+            
             if let result = result {
                 self?.pokemonList = PokemonList.model(fromResponseModel: result)
             }

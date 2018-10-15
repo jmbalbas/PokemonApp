@@ -16,6 +16,7 @@ class GameEngine {
         self.pokemonNames = pokemonNames
     }
     
+    /// Returns a Question.
     func getQuestion(completion: @escaping (Question?) -> Void) {
         if !questions.isEmpty {
             completion(questions.popLast()!)
@@ -25,22 +26,26 @@ class GameEngine {
             }
         }
         
+        // If there is only one question remaining, start loading next batch.
         if questions.count <= 1 {
             getQuestions(amount: 3)
         }
     }
     
-    func getQuestions(amount: Int, completion: (() -> Void)? = nil) {
+    private func getQuestions(amount: Int, completion: (() -> Void)? = nil) {
         var questions = [Question]()
         let dispatchGroup = DispatchGroup()
         for _ in 0 ..< amount {
             dispatchGroup.enter()
-            getRandomPokemonWithImage { (pokemon) in
-                var answers = self.getRandomAnswers(for: pokemon)
+            getRandomPokemonWithImage { [weak self] (pokemon) in
+                guard let strongSelf = self else { return }
+                
+                var answers = strongSelf.getRandomAnswers(for: pokemon)
                 answers.append(pokemon.name)
                 answers.shuffle()
                 
-                questions.append(Question(title: "¿Cual es este Pokemon?", imageURL: pokemon.sprites!.frontDefault!, answers: answers, correctAnswer: pokemon.name))
+                questions.append(Question(title: "Which one is this Pokémon?".localized, imageURL: pokemon.sprites!.frontDefault!, answers: answers, correctAnswer: pokemon.name))
+                
                 dispatchGroup.leave()
             }
         }
@@ -59,23 +64,28 @@ class GameEngine {
     private func getRandomPokemonWithImage(completion: @escaping (Pokemon) -> Void) {
         let pokemonName = pokemonNames.randomElement()!
         
-        getPokemon(withName: pokemonName) { (pokemon) in
+        getPokemon(withName: pokemonName) { [weak self] (pokemon, error) in
+            guard let pokemon = pokemon else {
+                self?.getRandomPokemonWithImage(completion: completion)
+                return
+            }
+            
             if !pokemon.hasSprites() {
-                self.getRandomPokemonWithImage(completion: completion)
+                self?.getRandomPokemonWithImage(completion: completion)
             } else {
                 completion(pokemon)
             }
         }
     }
     
-    private func getPokemon(withName name: String, completion: @escaping (Pokemon) -> Void) {
+    private func getPokemon(withName name: String, completion: @escaping (Pokemon?, Error?) -> Void) {
         NetworkService.getPokemon(withName: name) { (pokemonResponseModel, error) in
-            if let _ = error {
-                
-            }
+            var pokemon: Pokemon?
             
-            if let pokemonResponseModel = pokemonResponseModel, let pokemon = Pokemon.model(fromPokemonResponseModel: pokemonResponseModel, andPokemoSpecieResponseModel: nil) {
-                completion(pokemon)
+            defer { completion(pokemon, error) }
+            
+            if let pokemonResponseModel = pokemonResponseModel, let pokemonModel = Pokemon.model(fromPokemonResponseModel: pokemonResponseModel, andPokemoSpecieResponseModel: nil) {
+                pokemon = pokemonModel
             }
         }
     }

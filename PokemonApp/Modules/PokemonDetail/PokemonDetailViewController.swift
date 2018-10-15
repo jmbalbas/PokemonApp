@@ -21,7 +21,7 @@ class PokemonDetailViewController: BaseViewController {
     }
     
     enum Section {
-        case description, sprites, type, technicalData
+        case description, sprites, type
     }
     
     private var sections: [Section] = []
@@ -63,15 +63,6 @@ class PokemonDetailViewController: BaseViewController {
         tableView.register(PokemonDetailDescriptionTableViewCell.self, forCellReuseIdentifier: PokemonDetailDescriptionTableViewCell.reuseIdentifier)
         tableView.register(PokemonDetailSpritesTableViewCell.self, forCellReuseIdentifier: PokemonDetailSpritesTableViewCell.reuseIdentifier)
         tableView.register(PokemonDetailTypesTableViewCell.self, forCellReuseIdentifier: PokemonDetailTypesTableViewCell.reuseIdentifier)
-    }
-    
-    private func handleError() {
-        let alertController = UIAlertController(title: "Ops!", message: "Se ha producido un error cargando el pokemon", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "ok", style: .default) { [weak self] _ in
-            self?.navigationController?.popViewController(animated: true)
-        }
-        alertController.addAction(okAction)
-        present(alertController, animated: true, completion: nil)
     }
     
     private func loadPokemonData() {
@@ -129,7 +120,6 @@ class PokemonDetailViewController: BaseViewController {
         }
         
         sections.append(.type)
-//        sections.append(.technicalData)
     }
 }
 
@@ -141,10 +131,8 @@ extension PokemonDetailViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch sections[section] {
-        case .sprites:
-            return "Sprites"
         case .type:
-            return "Type"
+            return "Type".localized
         default:
             break
         }

@@ -9,12 +9,22 @@
 import Foundation
 
 extension String {
+    
+    /// Returns a substring of the original string.
+    /// - Parameters:
+    ///   - nsrange
     func substring(with nsrange: NSRange) -> Substring? {
         guard let range = Range(nsrange, in: self) else { return nil }
         return self[range]
     }
     
+    /// Replaces \n with whitespaces
     var replaceNewlinesWithWhitespaces: String {
         return components(separatedBy: .newlines).joined(separator: " ")
+    }
+    
+    /// Localized version of the string
+    var localized: String {
+        return NSLocalizedString(self, comment: "")
     }
 }

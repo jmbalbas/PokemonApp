@@ -1,0 +1,14 @@
+/* 
+  Localizable.strings
+  PokemonApp
+
+  Created by Juan Santiago Martín Balbás on 15/10/2018.
+  Copyright © 2018 Juan Santiago Martín Balbás. All rights reserved.
+*/
+
+"Home" = "Home";
+"Pokedex" = "Pokedex";
+"Types" = "Types";
+"Play" = "Play";
+"Which one is this Pokémon?" = "Which one is this Pokémon?";
+"There was a problem" = "There was a problem";

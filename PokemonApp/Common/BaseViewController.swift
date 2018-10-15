@@ -8,7 +8,6 @@
 
 import UIKit
 
-
 class BaseViewController: UIViewController {
     
     private lazy var activityIndicator: UIActivityIndicatorView = {
@@ -35,6 +34,15 @@ class BaseViewController: UIViewController {
     
     func stopLoading() {
         activityIndicator.stopAnimating()
+    }
+    
+    func handleError() {
+        let alertController = UIAlertController(title: "Ops!", message: "There was a problem".localized, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "ok", style: .default) { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        }
+        alertController.addAction(okAction)
+        present(alertController, animated: true, completion: nil)
     }
     
     private func setupGradientBackground() {

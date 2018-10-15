@@ -22,7 +22,7 @@ class HomeViewController: BaseViewController {
     private let pokedexButton: UIButton = {
         let pokedexButton = UIButton()
         pokedexButton.translatesAutoresizingMaskIntoConstraints = false
-        pokedexButton.setTitle("Pokedex", for: .normal)
+        pokedexButton.setTitle("Pokedex".localized, for: .normal)
         pokedexButton.setTitleColor(.black, for: .normal)
         pokedexButton.backgroundColor = .orange
         pokedexButton.layer.cornerRadius = 20
@@ -32,7 +32,7 @@ class HomeViewController: BaseViewController {
     private let playButton: UIButton = {
         let playButton = UIButton()
         playButton.translatesAutoresizingMaskIntoConstraints = false
-        playButton.setTitle("Play!", for: .normal)
+        playButton.setTitle("Play".localized, for: .normal)
         playButton.setTitleColor(.black, for: .normal)
         playButton.backgroundColor = .orange
         playButton.layer.cornerRadius = 20
@@ -74,18 +74,8 @@ class HomeViewController: BaseViewController {
     }
     
     private func setupUILayout() {
-//        let imageView = UIImageView(image: UIImage(named: "Pikachu"))
-//        imageView.contentMode = .scaleAspectFill
-//        imageView.translatesAutoresizingMaskIntoConstraints = false
-//
-//        view.insertSubview(imageView, at: 0)
-        title = "Home"
-//        
-//        imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-//        imageView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-//        imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-//        imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        
+        title = "Home".localized
+
         view.addSubview(logoImageView)
         
         logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50).isActive = true
