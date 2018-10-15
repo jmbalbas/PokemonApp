@@ -23,9 +23,11 @@ class HomeViewController: BaseViewController {
         let pokedexButton = UIButton()
         pokedexButton.translatesAutoresizingMaskIntoConstraints = false
         pokedexButton.setTitle("Pokedex".localized, for: .normal)
-        pokedexButton.setTitleColor(.black, for: .normal)
-        pokedexButton.backgroundColor = .orange
+        pokedexButton.setTitleColor(UIColor(red: 255/255, green: 203/255, blue: 164/255, alpha: 1), for: .normal)
+        pokedexButton.setBackgroundImage(UIImage(color: UIColor(red: 255/255, green: 111/255, blue: 0, alpha: 1)), for: .normal)
+        pokedexButton.setBackgroundImage(UIImage(color: UIColor(red: 217/255, green: 94/255, blue: 0, alpha: 1)), for: .highlighted)
         pokedexButton.layer.cornerRadius = 20
+        pokedexButton.clipsToBounds = true
         return pokedexButton
     }()
     
@@ -33,9 +35,11 @@ class HomeViewController: BaseViewController {
         let playButton = UIButton()
         playButton.translatesAutoresizingMaskIntoConstraints = false
         playButton.setTitle("Play".localized, for: .normal)
-        playButton.setTitleColor(.black, for: .normal)
-        playButton.backgroundColor = .orange
+        playButton.setTitleColor(UIColor(red: 255/255, green: 203/255, blue: 164/255, alpha: 1), for: .normal)
+        playButton.setBackgroundImage(UIImage(color: UIColor(red: 255/255, green: 111/255, blue: 0, alpha: 1)), for: .normal)
+        playButton.setBackgroundImage(UIImage(color: UIColor(red: 217/255, green: 94/255, blue: 0, alpha: 1)), for: .highlighted)
         playButton.layer.cornerRadius = 20
+        playButton.clipsToBounds = true
         return playButton
     }()
     

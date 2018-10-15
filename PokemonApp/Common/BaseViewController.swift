@@ -7,9 +7,9 @@
 //
 
 import UIKit
+import Alamofire
 
 class BaseViewController: UIViewController {
-    
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView(style: .gray)
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -22,10 +22,18 @@ class BaseViewController: UIViewController {
         return activityIndicator
     }()
     
+    var requests = [DataRequest?]()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setupGradientBackground()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        requests.forEach { $0?.cancel() }
     }
     
     func startLoading() {

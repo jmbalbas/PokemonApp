@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class PokemonDetailViewController: BaseViewController {
     private var pokemonName: String
@@ -23,7 +24,6 @@ class PokemonDetailViewController: BaseViewController {
     enum Section {
         case description, sprites, type
     }
-    
     private var sections: [Section] = []
     
     private lazy var tableView: UITableView = {
@@ -67,8 +67,8 @@ class PokemonDetailViewController: BaseViewController {
     
     private func loadPokemonData() {
         startLoading()
-
-        NetworkService.getPokemon(withName: pokemonName) { [weak self] (pokemonResponseModel, error) in
+        
+        let pokemonRequest = NetworkService.getPokemon(withName: pokemonName) { [weak self] (pokemonResponseModel, error) in
             if let _ = error {
                 self?.handleError()
                 return
@@ -83,7 +83,7 @@ class PokemonDetailViewController: BaseViewController {
                     return
                 }
 
-                NetworkService.getSpecie(fromURL: speciesURL) { (pokemonSpeciesResponseModel, error) in
+                let pokemonSpecieRequest = NetworkService.getSpecie(fromURL: speciesURL) { (pokemonSpeciesResponseModel, error) in
                     self?.stopLoading()
                     if let _ = error {
                         self?.handleError()
@@ -95,8 +95,12 @@ class PokemonDetailViewController: BaseViewController {
                         self?.pokemon = Pokemon.model(fromPokemonResponseModel: pokemonResponseModel, andPokemoSpecieResponseModel: pokemonSpeciesResponseModel)
                     }
                 }
+                
+                self?.requests.append(pokemonSpecieRequest)
             }
         }
+        
+        requests.append(pokemonRequest)
     }
 
     private func setupUILayout() {
@@ -132,7 +136,7 @@ extension PokemonDetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch sections[section] {
         case .type:
-            return "Type".localized
+            return "Types".localized
         default:
             break
         }
@@ -160,14 +164,7 @@ extension PokemonDetailViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: PokemonDetailTypesTableViewCell.reuseIdentifier, for: indexPath) as! PokemonDetailTypesTableViewCell
             cell.setup(with: pokemon?.types)
             return cell
-            
-        default:
-            break
         }
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "id", for: indexPath)
-        
-        return cell
     }
     
 }

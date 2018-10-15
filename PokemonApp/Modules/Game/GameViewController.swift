@@ -56,12 +56,16 @@ class GameViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.largeTitleDisplayMode = .never
 
         loadPokemonDataIfNeeded()
         setupUILayout()
         registerCells()
-        view.backgroundColor = .clear
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        gameEngine?.cancelRequests()
     }
     
     private func registerCells() {
@@ -71,7 +75,7 @@ class GameViewController: BaseViewController {
     private func loadPokemonDataIfNeeded() {
         startLoading()
         
-        NetworkService.getPokemons { [weak self] (result, error) in
+        let request = NetworkService.getPokemons { [weak self] (result, error) in
             self?.stopLoading()
             if let _ = error {
                 self?.handleError()
@@ -87,9 +91,14 @@ class GameViewController: BaseViewController {
                 })
             }
         }
+        
+        requests.append(request)
     }
     
     private func setupUILayout() {
+        view.backgroundColor = .clear
+        navigationItem.largeTitleDisplayMode = .never
+
         view.addSubview(questionLabel)
         
         questionLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20).isActive = true

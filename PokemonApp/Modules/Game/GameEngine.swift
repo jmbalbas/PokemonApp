@@ -7,11 +7,12 @@
 //
 
 import Foundation
+import Alamofire
 
 class GameEngine {
     let pokemonNames: [String]
     var questions: [Question] = []
-    
+    var requests = [DataRequest?]()
     init(pokemonNames: [String]) {
         self.pokemonNames = pokemonNames
     }
@@ -30,6 +31,10 @@ class GameEngine {
         if questions.count <= 1 {
             getQuestions(amount: 3)
         }
+    }
+    
+    func cancelRequests() {
+        requests.forEach { $0?.cancel() }
     }
     
     private func getQuestions(amount: Int, completion: (() -> Void)? = nil) {
@@ -79,7 +84,7 @@ class GameEngine {
     }
     
     private func getPokemon(withName name: String, completion: @escaping (Pokemon?, Error?) -> Void) {
-        NetworkService.getPokemon(withName: name) { (pokemonResponseModel, error) in
+        let request = NetworkService.getPokemon(withName: name) { (pokemonResponseModel, error) in
             var pokemon: Pokemon?
             
             defer { completion(pokemon, error) }
@@ -88,5 +93,6 @@ class GameEngine {
                 pokemon = pokemonModel
             }
         }
+        requests.append(request)
     }
 }

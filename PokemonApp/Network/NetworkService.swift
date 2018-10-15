@@ -28,15 +28,15 @@ final class NetworkService {
     /// Obtains a pokemon list.
     /// - Parameters:
     ///   - completionHandler: This contains the responsemodel and the error, if any.
-    static func getPokemons(completionHandler: @escaping (PokemonListResponseModel?, Error?) -> ()) {
+    static func getPokemons(completionHandler: @escaping (PokemonListResponseModel?, Error?) -> ()) -> DataRequest? {
         let url = baseUrl + EndPoint.getPokemon.description
         
         if let cachedResponseModel = getCachedRequest(urlString: url, responseModelType: PokemonListResponseModel.self) {
             completionHandler(cachedResponseModel, nil)
-            return
+            return nil
         }
         
-        Alamofire.request(url, method: .get, parameters: nil).validate().responseJSON { (response) in
+        return Alamofire.request(url, method: .get, parameters: nil).validate().responseJSON { (response) in
             var result: PokemonListResponseModel?
             let error = response.error
             
@@ -56,15 +56,15 @@ final class NetworkService {
     /// - Parameters:
     ///   - name: The name of the pokemon.
     ///   - completionHandler: This contains the responsemodel and the error, if any.
-    static func getPokemon(withName name: String, completionHandler: @escaping (PokemonResponseModel?, Error?) -> ()) {
+    static func getPokemon(withName name: String, completionHandler: @escaping (PokemonResponseModel?, Error?) -> ()) -> DataRequest? {
         let url = baseUrl + EndPoint.getPokemon.description + name
         
         if let cachedResponseModel = getCachedRequest(urlString: url, responseModelType: PokemonResponseModel.self) {
             completionHandler(cachedResponseModel, nil)
-            return
+            return nil
         }
         
-        Alamofire.request(url, method: .get, parameters: nil).validate().responseJSON { (response) in
+        return Alamofire.request(url, method: .get, parameters: nil).validate().responseJSON { (response) in
             var result: PokemonResponseModel?
             let error = response.error
             
@@ -83,13 +83,13 @@ final class NetworkService {
     /// - Parameters:
     ///   - url: The url to obtain the data from.
     ///   - completionHandler: This contains the responsemodel and the error, if any.
-    static func getSpecie(fromURL url: URL, completionHandler: @escaping (PokemonSpecieResponseModel?, Error?) -> ()) {
+    static func getSpecie(fromURL url: URL, completionHandler: @escaping (PokemonSpecieResponseModel?, Error?) -> ()) -> DataRequest? {
         if let cachedResponseModel = getCachedRequest(urlString: url.absoluteString, responseModelType: PokemonSpecieResponseModel.self) {
             completionHandler(cachedResponseModel, nil)
-            return
+            return nil
         }
         
-        Alamofire.request(url, method: .get, parameters: nil).validate().responseJSON { (response) in
+        return Alamofire.request(url, method: .get, parameters: nil).validate().responseJSON { (response) in
             var result: PokemonSpecieResponseModel?
             let error = response.error
             

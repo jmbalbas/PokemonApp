@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class PokedexViewController: BaseViewController {
 
@@ -48,7 +49,7 @@ class PokedexViewController: BaseViewController {
             tableView.deselectRow(at: index, animated: true)
         }
     }
-    
+  
     private func registerCells() {
         tableView.register(PokedexTableViewCell.self, forCellReuseIdentifier: PokedexTableViewCell.reuseIdentifier)
     }
@@ -67,7 +68,7 @@ class PokedexViewController: BaseViewController {
 
     private func loadPokemonsIfNeeded() {
         startLoading()
-        NetworkService.getPokemons { [weak self] (result, error) in
+        let request = NetworkService.getPokemons { [weak self] (result, error) in
             self?.stopLoading()
             
             if let _ = error {
@@ -79,6 +80,8 @@ class PokedexViewController: BaseViewController {
                 self?.pokemonList = PokemonList.model(fromResponseModel: result)
             }
         }
+        
+        requests.append(request)
     }
 }
 
