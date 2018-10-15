@@ -89,7 +89,7 @@ class GameEngine {
             
             defer { completion(pokemon, error) }
             
-            if let pokemonResponseModel = pokemonResponseModel, let pokemonModel = Pokemon.model(fromPokemonResponseModel: pokemonResponseModel, andPokemoSpecieResponseModel: nil) {
+            if let pokemonResponseModel = pokemonResponseModel, let pokemonModel = Pokemon.model(fromPokemonResponseModel: pokemonResponseModel, andPokemonSpecieResponseModel: nil) {
                 pokemon = pokemonModel
             }
         }

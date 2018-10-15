@@ -45,7 +45,7 @@ struct Pokemon {
 }
 
 extension Pokemon {
-    static func model(fromPokemonResponseModel pokemonResponseModel: PokemonResponseModel, andPokemoSpecieResponseModel pokemonSpecieResponseModel: PokemonSpecieResponseModel?) -> Pokemon? {
+    static func model(fromPokemonResponseModel pokemonResponseModel: PokemonResponseModel, andPokemonSpecieResponseModel pokemonSpecieResponseModel: PokemonSpecieResponseModel?) -> Pokemon? {
         guard let name = pokemonResponseModel.name, let id = pokemonResponseModel.id else { return nil }
         
         var descriptions: [PokemonDescription]?

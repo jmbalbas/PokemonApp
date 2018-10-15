@@ -52,8 +52,6 @@ class PokemonDetailViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.largeTitleDisplayMode = .never
-
         setupUILayout()
         registerCells()
         loadPokemonData()
@@ -78,7 +76,7 @@ class PokemonDetailViewController: BaseViewController {
                 self?.pokemonResponseModel = pokemonResponseModel
 
                 guard let speciesURL = pokemonResponseModel.species?.url else {
-                    self?.pokemon = Pokemon.model(fromPokemonResponseModel: pokemonResponseModel, andPokemoSpecieResponseModel: nil)
+                    self?.pokemon = Pokemon.model(fromPokemonResponseModel: pokemonResponseModel, andPokemonSpecieResponseModel: nil)
                     self?.stopLoading()
                     return
                 }
@@ -92,7 +90,7 @@ class PokemonDetailViewController: BaseViewController {
 
                     if let pokemonSpeciesResponseModel = pokemonSpeciesResponseModel {
                         self?.pokemonSpecieResponseModel = pokemonSpeciesResponseModel
-                        self?.pokemon = Pokemon.model(fromPokemonResponseModel: pokemonResponseModel, andPokemoSpecieResponseModel: pokemonSpeciesResponseModel)
+                        self?.pokemon = Pokemon.model(fromPokemonResponseModel: pokemonResponseModel, andPokemonSpecieResponseModel: pokemonSpeciesResponseModel)
                     }
                 }
                 
@@ -104,6 +102,7 @@ class PokemonDetailViewController: BaseViewController {
     }
 
     private func setupUILayout() {
+        navigationItem.largeTitleDisplayMode = .never
         title = pokemonName
         view.backgroundColor = .clear
         
@@ -158,7 +157,7 @@ extension PokemonDetailViewController: UITableViewDataSource {
             return cell
         case .sprites:
             let cell = tableView.dequeueReusableCell(withIdentifier: PokemonDetailSpritesTableViewCell.reuseIdentifier, for: indexPath) as! PokemonDetailSpritesTableViewCell
-            cell.setup(with: pokemon?.sprites, defaultFrontImage: UIImage(named: "unkownPokemonFront"), defaultBackImage: UIImage(named: "unkownPokemonBack"))
+            cell.setup(with: pokemon?.sprites, defaultFrontImage: UIImage(named: "unknownPokemonFront"), defaultBackImage: UIImage(named: "unknownPokemonBack"))
             return cell
         case .type:
             let cell = tableView.dequeueReusableCell(withIdentifier: PokemonDetailTypesTableViewCell.reuseIdentifier, for: indexPath) as! PokemonDetailTypesTableViewCell

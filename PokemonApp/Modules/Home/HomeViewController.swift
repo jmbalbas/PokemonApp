@@ -24,8 +24,8 @@ class HomeViewController: BaseViewController {
         pokedexButton.translatesAutoresizingMaskIntoConstraints = false
         pokedexButton.setTitle("Pokedex".localized, for: .normal)
         pokedexButton.setTitleColor(UIColor(red: 255/255, green: 203/255, blue: 164/255, alpha: 1), for: .normal)
-        pokedexButton.setBackgroundImage(UIImage(color: UIColor(red: 255/255, green: 111/255, blue: 0, alpha: 1)), for: .normal)
-        pokedexButton.setBackgroundImage(UIImage(color: UIColor(red: 217/255, green: 94/255, blue: 0, alpha: 1)), for: .highlighted)
+        pokedexButton.setBackgroundImage(UIImage(color: UIColor(red: 255/255, green: 111/255, blue: 0, alpha: 0.95)), for: .normal)
+        pokedexButton.setBackgroundImage(UIImage(color: UIColor(red: 217/255, green: 94/255, blue: 0, alpha: 0.95)), for: .highlighted)
         pokedexButton.layer.cornerRadius = 20
         pokedexButton.clipsToBounds = true
         return pokedexButton
@@ -36,8 +36,8 @@ class HomeViewController: BaseViewController {
         playButton.translatesAutoresizingMaskIntoConstraints = false
         playButton.setTitle("Play".localized, for: .normal)
         playButton.setTitleColor(UIColor(red: 255/255, green: 203/255, blue: 164/255, alpha: 1), for: .normal)
-        playButton.setBackgroundImage(UIImage(color: UIColor(red: 255/255, green: 111/255, blue: 0, alpha: 1)), for: .normal)
-        playButton.setBackgroundImage(UIImage(color: UIColor(red: 217/255, green: 94/255, blue: 0, alpha: 1)), for: .highlighted)
+        playButton.setBackgroundImage(UIImage(color: UIColor(red: 255/255, green: 111/255, blue: 0, alpha: 0.95)), for: .normal)
+        playButton.setBackgroundImage(UIImage(color: UIColor(red: 217/255, green: 94/255, blue: 0, alpha: 0.95)), for: .highlighted)
         playButton.layer.cornerRadius = 20
         playButton.clipsToBounds = true
         return playButton
@@ -91,6 +91,16 @@ class HomeViewController: BaseViewController {
         buttonsStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100).isActive = true
         buttonsStackView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
         buttonsStackView.widthAnchor.constraint(equalToConstant: 250).isActive = true
+        
+        let imageView = UIImageView(image: UIImage(named: "PikachuImage"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFill
+        view.insertSubview(imageView, belowSubview: buttonsStackView)
+        
+        imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        imageView.leadingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
+        imageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        imageView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.7).isActive = true
     }
     
     private func setupButtonsActions() {
