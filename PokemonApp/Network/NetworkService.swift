@@ -15,14 +15,12 @@ final class NetworkService {
     private static let requestCache = NSCache<AnyObject, AnyObject>()
     
     enum EndPoint {
-        case getPokemon//, getSpecie
+        case getPokemon
         
         var description: String {
             switch self {
             case .getPokemon:
                 return "/pokemon/"
-//            case .getSpecie:
-//                return "/pokemon-species/"
             }
         }
     }

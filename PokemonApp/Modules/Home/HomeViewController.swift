@@ -74,16 +74,17 @@ class HomeViewController: BaseViewController {
     }
     
     private func setupUILayout() {
-        let imageView = UIImageView(image: UIImage(named: "Pikachu"))
-        imageView.contentMode = .scaleAspectFill
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.insertSubview(imageView, at: 0)
-        
-        imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        imageView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+//        let imageView = UIImageView(image: UIImage(named: "Pikachu"))
+//        imageView.contentMode = .scaleAspectFill
+//        imageView.translatesAutoresizingMaskIntoConstraints = false
+//
+//        view.insertSubview(imageView, at: 0)
+        title = "Home"
+//        
+//        imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+//        imageView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+//        imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+//        imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
         view.addSubview(logoImageView)
         
@@ -104,10 +105,12 @@ class HomeViewController: BaseViewController {
     }
     
     @objc private func playButtonDidTouchUpInside() {
+        let gameViewController = GameViewController()
+        navigationController?.pushViewController(gameViewController, animated: true)
     }
     
     @objc private func pokedexButtonDidTouchUpInside() {
-        let pokedexViewController = PokedexTableViewController()
+        let pokedexViewController = PokedexViewController()
         navigationController?.pushViewController(pokedexViewController, animated: true)
     }
     

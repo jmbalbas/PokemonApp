@@ -9,15 +9,15 @@
 import Foundation
 
 struct PokemonResponseModel {
-    private(set) var name: String?
-    private(set) var id: Int?
-    private(set) var order: Int?
-    private(set) var height: Int?
-    private(set) var weight: Int?
-    private(set) var baseExperience: Int?
-    private(set) var types: [TypesResponseModel]?
-    private(set) var sprites: Sprite?
-    private(set) var species: SpeciesResponseModel?
+    let name: String?
+    let id: Int?
+    let order: Int?
+    let height: Int?
+    let weight: Int?
+    let baseExperience: Int?
+    let types: [TypesResponseModel]?
+    let sprites: Sprite?
+    let species: SpeciesResponseModel?
 }
 
 extension PokemonResponseModel: Decodable {
@@ -129,8 +129,8 @@ extension Sprite: Decodable {
 }
 
 struct SpeciesResponseModel {
-    private(set) var name: String?
-    private(set) var url: URL?
+    let name: String?
+    let url: URL?
 }
 
 extension SpeciesResponseModel: Decodable {

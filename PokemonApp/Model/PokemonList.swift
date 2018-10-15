@@ -9,12 +9,12 @@
 import Foundation
 
 struct PokemonList {
-    private(set) var list: [(pokemonName: String, pokemonId: String?)]
+    let list: [(pokemonName: String, pokemonId: String?)]
 }
 
 extension PokemonList {
     static func model(fromResponseModel responseModel: PokemonListResponseModel) -> PokemonList? {
-        guard let pokemons = responseModel.pokemons else { return nil }
+        guard let pokemons = responseModel.pokemons else { return nil }
         return PokemonList(list: pokemons.map { ($0.pokemonName, getPokemonIdFromURL($0.url)) })
     }
     

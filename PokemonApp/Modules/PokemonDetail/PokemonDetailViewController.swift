@@ -35,6 +35,7 @@ class PokemonDetailViewController: BaseViewController {
         tableView.allowsSelection = false
         tableView.rowHeight = UITableView.automaticDimension;
         tableView.estimatedRowHeight = 100;
+        tableView.backgroundColor = .clear
         return tableView
     }()
     
@@ -109,7 +110,7 @@ class PokemonDetailViewController: BaseViewController {
 
     private func setupUILayout() {
         title = pokemonName
-        view.backgroundColor = .white
+        view.backgroundColor = .clear
         
         view.addSubview(tableView)
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
@@ -165,7 +166,7 @@ extension PokemonDetailViewController: UITableViewDataSource {
             return cell
         case .sprites:
             let cell = tableView.dequeueReusableCell(withIdentifier: PokemonDetailSpritesTableViewCell.reuseIdentifier, for: indexPath) as! PokemonDetailSpritesTableViewCell
-            cell.setup(with: pokemon?.sprites)
+            cell.setup(with: pokemon?.sprites, defaultFrontImage: UIImage(named: "unkownPokemonFront"), defaultBackImage: UIImage(named: "unkownPokemonBack"))
             return cell
         case .type:
             let cell = tableView.dequeueReusableCell(withIdentifier: PokemonDetailTypesTableViewCell.reuseIdentifier, for: indexPath) as! PokemonDetailTypesTableViewCell
@@ -198,4 +199,8 @@ extension PokemonDetailViewController: UITableViewDelegate {
         }
     }
  
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.backgroundColor = .clear
+    }
+    
 }

@@ -34,9 +34,13 @@ class PokemonDetailSpritesTableViewCell: UITableViewCell {
     }()
     
     private var sprite: Sprite?
+    private var defaultFrontImage: UIImage?
+    private var defaultBackImage: UIImage?
     
-    func setup(with sprite: Sprite?) {
+    func setup(with sprite: Sprite?, defaultFrontImage: UIImage?, defaultBackImage: UIImage?) {
         self.sprite = sprite
+        self.defaultFrontImage = defaultFrontImage
+        self.defaultBackImage = defaultBackImage
         setupUILayout()
     }
     
@@ -57,7 +61,7 @@ class PokemonDetailSpritesTableViewCell: UITableViewCell {
         if let frontDefaultURL = sprite?.frontDefault {
             frontDefaultImageView.loadImageUrl(frontDefaultURL, placeholder: nil)
         } else {
-            frontDefaultImageView.image = UIImage(named: "unknownPokemonFront")
+            frontDefaultImageView.image = defaultFrontImage
         }
         stackView.addArrangedSubview(backDefaultImageView)
         backDefaultImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
@@ -67,7 +71,7 @@ class PokemonDetailSpritesTableViewCell: UITableViewCell {
         if let backDefaultURL = sprite?.backDefault {
             backDefaultImageView.loadImageUrl(backDefaultURL, placeholder: nil)
         } else {
-            backDefaultImageView.image = UIImage(named: "unknownPokemonBack")
+            backDefaultImageView.image = defaultBackImage
         }
     }
 }

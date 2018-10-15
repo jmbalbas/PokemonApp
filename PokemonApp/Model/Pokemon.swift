@@ -7,26 +7,20 @@
 //
 
 import Foundation
-struct PokemonDescription {
-    private(set) var description: String
-    private(set) var languageCode: String
-}
 
 struct Pokemon {
-    private(set) var name: String
-    private(set) var id: Int
-    private(set) var descriptions: [PokemonDescription]?
-    private(set) var order: Int?
-    private(set) var height: Int?
-    private(set) var weight: Int?
-    private(set) var baseExperience: Int?
-    private(set) var types: [PokemonType]?
-    private(set) var sprites: Sprite?
+    let name: String
+    let id: Int
+    let descriptions: [PokemonDescription]?
+    let order: Int?
+    let height: Int?
+    let weight: Int?
+    let baseExperience: Int?
+    let types: [PokemonType]?
+    let sprites: Sprite?
     
     func hasSprites() -> Bool {
         return sprites?.frontDefault != nil
-            || sprites?.backDefault != nil
-        // TODO: Complete
     }
     
     func hasTypes() -> Bool {
@@ -41,15 +35,16 @@ struct Pokemon {
         if let language = Locale.preferredLanguages.first {
             let languageDict = Locale.components(fromIdentifier: language)
             let languageCode = languageDict["kCFLocaleLanguageCodeKey"]
-            return descriptions?.filter { $0.languageCode == languageCode }.first?.description
-        } else {
-            return descriptions?.filter { $0.languageCode == "en" }.first?.description
+            if let languageDescription = descriptions?.filter({ $0.languageCode == languageCode }).first {
+                return languageDescription.description
+            }
         }
+        
+        return descriptions?.filter { $0.languageCode == "en" }.first?.description
     }
 }
 
 extension Pokemon {
-    
     static func model(fromPokemonResponseModel pokemonResponseModel: PokemonResponseModel, andPokemoSpecieResponseModel pokemonSpecieResponseModel: PokemonSpecieResponseModel?) -> Pokemon? {
         guard let name = pokemonResponseModel.name, let id = pokemonResponseModel.id else { return nil }
         
@@ -72,4 +67,9 @@ extension Pokemon {
                        types: pokemonResponseModel.types?.compactMap { PokemonType(rawValue: $0.type?.name ?? "") } ,
                        sprites: pokemonResponseModel.sprites)
     }
+}
+
+struct PokemonDescription {
+    let description: String
+    let languageCode: String
 }

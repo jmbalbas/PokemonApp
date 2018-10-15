@@ -1,5 +1,5 @@
 //
-//  PokedexTableViewController.swift
+//  PokedexViewController.swift
 //  PokemonApp
 //
 //  Created by Juan Santiago Martín Balbás on 12/10/2018.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PokedexTableViewController: BaseViewController {
+class PokedexViewController: BaseViewController {
 
     private var pokemonList: PokemonList? {
         didSet {
@@ -21,6 +21,7 @@ class PokedexTableViewController: BaseViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.backgroundColor = .clear
         return tableView
     }()
     
@@ -55,7 +56,8 @@ class PokedexTableViewController: BaseViewController {
     private func setupUILayout() {
         title = "Pokedex"
         navigationController?.navigationBar.prefersLargeTitles = true
-        
+        view.backgroundColor = .clear
+
         view.addSubview(tableView)
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
@@ -79,7 +81,7 @@ class PokedexTableViewController: BaseViewController {
     }
 }
 
-extension PokedexTableViewController: UITableViewDataSource {
+extension PokedexViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -100,12 +102,11 @@ extension PokedexTableViewController: UITableViewDataSource {
 
 }
 
-extension PokedexTableViewController: UITableViewDelegate {
+extension PokedexViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cell.backgroundColor = .clear
     }
-    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 40

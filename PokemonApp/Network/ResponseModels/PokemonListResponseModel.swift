@@ -9,15 +9,15 @@
 import Foundation
 
 struct PokemonListResponseModel {
-    private(set) var count: Int
-    private(set) var pokemons: [(pokemonName: String, url: URL?)]?
+    let count: Int
+    let pokemons: [(pokemonName: String, url: URL?)]?
 }
 
 extension PokemonListResponseModel: Decodable {
     
     struct Pokemon: Decodable {
-        private(set) var name: String
-        private(set) var url: URL?
+        let name: String
+        let url: URL?
         
         init(name: String, url: URL?) {
             self.name = name
